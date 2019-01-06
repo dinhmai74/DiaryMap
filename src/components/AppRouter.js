@@ -1,6 +1,6 @@
 import React from 'react';
-import {View} from 'react-native';
-import {Scene, Router} from 'react-native-router-flux';
+import {View, Text} from 'react-native';
+import {SideMenu, Drawer, Scene, Router} from 'react-native-router-flux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Home from './Home';
 import Map from './Map';
@@ -17,13 +17,23 @@ const TabIcon = ({selected, title, iconName}) => {
     );
 };
 
+const DrawerIcon = () => {
+    return(
+        <View style={{flexDirection: "column", alignSelf: 'flex-end', justifyContent: 'space-around', marginTop: 10}}>
+            <Icon name='menu' size={40} color='white' />
+        </View>
+    )
+}
+
 const styles = {
     navigationBarStyle: {
-        backgroundColor: '#f4f4f8'
+        backgroundColor: '#26d6f2',
+        justifyContent: 'flex-start'
     }, 
     titleStyle: {
-        color: '#005b96',
-        fontWeight: 'bold'
+        color: 'white',
+        fontWeight: 'bold',
+        alignSelf: 'center'
     }
 }
 
@@ -31,44 +41,39 @@ const {navigationBarStyle, titleStyle} = styles;
 
 const AppRouter = () => {
     return (
-        <Router>
+        <Router
+            navigationBarStyle={navigationBarStyle}
+            titleStyle={titleStyle}
+            renderLeftButton={DrawerIcon}>
             <Scene key='tabs' tabs tabBarStyle={{backgroundColor: '#FFFFFF', elevation: 25}}>
                 <Scene
                     key="home"
                     component={Home} 
                     iconName='home'
-                    title="Home"
+                    title="DISCOVERY"
                     icon={TabIcon}
-                    navigationBarStyle={navigationBarStyle}
-                    titleStyle={titleStyle}
-                    initial
                 />
                 <Scene
                     key='map'
                     component={Map}
-                    title='Map'
+                    title='MAP'
                     iconName='map'
                     icon={TabIcon}
-                    navigationBarStyle={navigationBarStyle}
-                    titleStyle={titleStyle}
                 />
                 <Scene
                     key='album'
                     component={Album}
-                    title='Album'
+                    title='ALBUM'
                     iconName='photo'
                     icon={TabIcon}
-                    navigationBarStyle={navigationBarStyle}
-                    titleStyle={titleStyle}
                 />
                 <Scene
                     key='calendar'
                     component={AppCalendar}
-                    title='Calendar'
+                    title='CALENDAR'
                     iconName='today'
                     icon={TabIcon}
-                    navigationBarStyle={navigationBarStyle}
-                    titleStyle={titleStyle}
+                    initial
                 />
                 
             </Scene>
