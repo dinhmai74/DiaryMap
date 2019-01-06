@@ -52,6 +52,7 @@ const AppRouter = () => {
                     iconName='home'
                     title="DISCOVERY"
                     icon={TabIcon}
+                    initial
                 />
                 <Scene
                     key='map'
@@ -73,7 +74,6 @@ const AppRouter = () => {
                     title='CALENDAR'
                     iconName='today'
                     icon={TabIcon}
-                    initial
                 />
                 
             </Scene>
