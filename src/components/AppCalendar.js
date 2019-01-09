@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import moment from 'moment'
 import { Text, View, StyleSheet } from 'react-native';
 import { Calendar, CalendarList, Agenda, InfiniteAgenda } from 'react-native-calendars';
+import Item from './Item'
 
 var today = moment().format('YYYY-MM-DD');
 var stime = '2019-01-05T07:34:00+07:00';
@@ -36,6 +37,7 @@ class AppCalendar extends Component {
                 futureScrollRange={50}
                 renderEmptyDate={this.renderEmptyDate}
                 renderItem={this.renderItem}
+                // renderDay={this.renderDay}
                 rowHasChanged={this.rowHasChanged}
             />
         </View>
@@ -66,12 +68,21 @@ class AppCalendar extends Component {
         );
     };
 
+    renderDay = (day) => {
+        return(
+            <View>
+
+            </View>
+        )
+    }
+
     renderItem = (item) => {
         return (
-        <View style={styles.itemContainer}>
-            <Text style={styles.itemTitle}>{item.title}</Text>
-            <Text style={styles.itemText} numberOfLines={3}>{item.text}</Text>
-        </View>
+        // <View style={styles.itemContainer}>
+        //     <Text style={styles.itemTitle}>{item.title}</Text>
+        //     <Text style={styles.itemText} numberOfLines={3}>{item.text}</Text>
+        // </View>
+        <Item item={item} />
         );
     };
 

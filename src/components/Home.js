@@ -37,7 +37,7 @@ export default class Home extends Component {
                                 keyExtractor={(item, index)=>item.title}
                                 renderItem={({item})=> {
                                     return(
-                                        <View>
+                                        <View style={{marginLeft: 20}}>
                                             <Item item={item} />
                                         </View>
                                     )

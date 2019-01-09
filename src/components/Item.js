@@ -19,7 +19,10 @@ const styles = StyleSheet.create({
         marginTop: 5,
         paddingLeft: 15,
         padding: 5,
-        backgroundColor: '#ffffff'
+        backgroundColor: '#ffffff',
+        borderLeftWidth: 5,
+        borderRadius: 3,
+        borderColor: '#f4a55d'
     },
     title: {
         fontSize: 17,
@@ -28,5 +31,6 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 13,
+        textAlign: 'justify'
     }
 })
