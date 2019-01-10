@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Text, View, StyleSheet } from 'react-native'
 import {Actions} from 'react-native-router-flux'
+import Icon from 'react-native-vector-icons/FontAwesome'
 
 export default class Home extends Component {
   render() {
@@ -9,6 +10,10 @@ export default class Home extends Component {
         <View style={styles.container}>
             <Text style={styles.title}>{item.title}</Text>
             <Text style={styles.text} numberOfLines={3}>{item.text}</Text>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <Icon name='map-marker' style={{marginRight: 3}}/>
+                <Text style={styles.text}>Đông Hoà, Dĩ An, Bình Dương</Text>
+            </View>
         </View>
         );
     }

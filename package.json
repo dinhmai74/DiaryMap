@@ -7,13 +7,17 @@
     "test": "jest"
   },
   "dependencies": {
+    "firebase": "^5.7.2",
+    "firebase-tools": "^6.2.2",
     "moment": "^2.23.0",
     "react": "16.6.3",
     "react-native": "0.57.8",
     "react-native-calendars": "^1.21.0",
+    "react-native-google-places": "^2.5.2",
     "react-native-maps": "^0.22.1",
     "react-native-router-flux": "^3.45.0",
-    "react-native-vector-icons": "^6.1.0"
+    "react-native-vector-icons": "^6.1.0",
+    "save": "^2.3.3"
   },
   "devDependencies": {
     "babel-jest": "23.6.0",

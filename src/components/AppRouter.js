@@ -1,13 +1,14 @@
 import React from 'react';
 import {View, Text} from 'react-native';
-import {SideMenu, Drawer, Scene, Router} from 'react-native-router-flux';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import {SideMenu, Drawer, Scene, Router, Actions} from 'react-native-router-flux';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import Home from './Home';
 import Map from './Map';
 import Album from './Album';
 import AppCalendar from './AppCalendar';
 import Login from './Login';
 import Register from './Register';
+import AddEvent from './AddEvent';
 
 const TabIcon = ({selected, title, iconName}) => {
     const color = selected ? '#04c9e8' : '#3f3f3f';
@@ -22,7 +23,15 @@ const TabIcon = ({selected, title, iconName}) => {
 const DrawerIcon = () => {
     return(
         <View style={{flexDirection: "column", alignSelf: 'flex-end', justifyContent: 'space-around', marginTop: 10}}>
-            <Icon name='bars' size={30} color='white' />
+            <Icon name='bars' size={30} color='white' onPress={()=>{}} />
+        </View>
+    )
+}
+
+const AddIcon = () => {
+    return(
+        <View style={{flexDirection: "column", alignSelf: 'flex-end', justifyContent: 'space-around', marginTop: 10}}>
+            <Icon name='plus-circle' size={35} color='white' onPress={()=>Actions.add()}/>
         </View>
     )
 }
@@ -46,7 +55,8 @@ const AppRouter = () => {
         <Router
             navigationBarStyle={navigationBarStyle}
             titleStyle={titleStyle}
-            renderLeftButton={DrawerIcon}>
+            renderLeftButton={DrawerIcon}
+            renderRightButton={AddIcon} >
             <Scene key='auth' tabBarStyle={{backgroundColor: '#FFFFFF', elevation: 25}}>
                 <Scene
                     key="login"
@@ -61,37 +71,43 @@ const AppRouter = () => {
                 />
             </Scene>
 
-            <Scene key='tabs' tabs tabBarStyle={{backgroundColor: '#FFFFFF', elevation: 25}}>
+            <Scene key='tabs' tabs tabBarStyle={{backgroundColor: '#FFFFFF', elevation: 25}} initial>
                 <Scene
                     key="home"
                     component={Home} 
                     iconName='home'
                     title="DISCOVERY"
                     icon={TabIcon}
+                    initial
                 />
                 <Scene
                     key='map'
                     component={Map}
                     title='MAP'
-                    iconName='map'
+                    iconName='map-marked-alt'
                     icon={TabIcon}
                 />
                 <Scene
                     key='album'
                     component={Album}
                     title='ALBUM'
-                    iconName='photo'
+                    iconName='images'
                     icon={TabIcon}
                 />
                 <Scene
                     key='calendar'
                     component={AppCalendar}
                     title='CALENDAR'
-                    iconName='today'
+                    iconName='calendar-alt'
                     icon={TabIcon}
-                />
-                
+                />                
             </Scene>
+
+            <Scene
+                key='add'
+                component={AddEvent}
+                title='ADD EVENT'
+            />
         </Router>
     )
 }
