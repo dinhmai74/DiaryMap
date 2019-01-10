@@ -1,29 +1,181 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image, ImageBackground } from 'react-native';
+import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image, ImageBackground, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'
+import {firebaseApp} from './FirebaseConfig'
+import {PASSWORD, EMAIL, USERNAME} from  './Regexs'
 
 class Register extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            username: '',
+            email: '',
+            password: '',
+            repassword: '',
+            usernameValid: false,
+            emailValid: false,
+            passwordValid: false,
+            repasswordValid: false
+        }
+    }
+
+    validate(type, value) {
+        if (type == "username") {
+            this.setState({username: value})
+            if (USERNAME.test(value)) 
+                this.setState({usernameValid: true})
+            else
+                this.setState({usernameValid: false})
+        }
+        else if (type == "email") {
+            this.setState({email: value})
+            if (EMAIL.test(value)) 
+                this.setState({emailValid: true})
+            else 
+                this.setState({emailValid: false})
+        }
+        else if (type == "password") {
+            this.setState({password: value})
+            if (PASSWORD.test(value))
+                this.setState({passwordValid: true})
+            else 
+                this.setState({passwordValid: false})
+        }
+        else if (type == "repassword") {
+            this.setState({repassword: value})
+            if (value == this.state.password)
+                this.setState({repasswordValid: true})
+            else 
+                this.setState({repasswordValid: false})
+        }
+    }
+
+    _register() {
+        if (this.state.emailValid && this.state.usernameValid && this.state.passwordValid && this.state.repasswordValid) {
+            firebaseApp.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
+            .then(() => {
+                Alert.alert(
+                    'SIGNUP SUCCESSFUL'
+                    // Navigate Home 
+                )
+
+                // Update displayName
+                var user = firebaseApp.auth().currentUser
+                if (user) {
+                    user.updateProfile({
+                        displayName: this.state.username,
+                    }).then(function () {
+                        // Do nothing
+                    }).catch(function (error) {
+                        Alert.alert(
+                            'ERROR',
+                            'Cannot update your username.'
+                        )
+                    });
+                }
+            }).catch(function(error) {
+                Alert.alert(
+                    'SIGNUP FAILED',
+                    'This email address is using by another user.'
+                )
+                return
+            });
+        } 
+        else {
+            if (this.state.username == '') {
+                Alert.alert(
+                    'SIGNUP FAILED',
+                    'Please enter your username.'
+                )
+            }
+            else if (!this.state.usernameValid) {
+                Alert.alert(
+                    'SIGNUP FAILED',
+                    'Username invalid. Username must uses characters within [a-zA-Z0-9_] and at least 3.'
+                )
+            }
+            else if (this.state.email == '') {
+                Alert.alert(
+                    'SIGNUP FAILED',
+                    'Please enter your email.'
+                )
+            }
+            else if (!this.state.emailValid) {
+                Alert.alert(
+                    'SIGNUP FAILED',
+                    'Email invalid. Please check your email format.'
+                )
+            }
+            else if (this.state.password == '') {
+                Alert.alert(
+                    'SIGNUP FAILED',
+                    'Please enter your password'
+                )
+            }
+            else if (!this.state.passwordValid) {
+                Alert.alert(
+                    'SIGNUP FAILED',
+                    'Password invalid. Password must uses characters within [a-zA-Z0-9] and at least 6.'
+                )
+            }
+            else if (this.state.repassword == '') {
+                Alert.alert(
+                    'SIGNUP FAILED',
+                    'Please reenter your password.'
+                )
+            }
+            else if (!this.state.repasswordValid) {
+                Alert.alert(
+                    'SIGNUP FAILED',
+                    'Repassword does not matched. Please check your repassword.'
+                )
+            }
+        }
+    }
+    
     render() {
         return (
             <ImageBackground source={require('../assets/letter.png')} style={styles.container}>
                 <Image source={require('../assets/logo.png')} style={{height: 160, resizeMode: 'center', alignSelf: 'center'}} />
                 <View style={styles.inputContainer}>
                     <Icon style={{ color: 'white', marginHorizontal: 8 }} name={'user-circle'} size={25} />
-                    <TextInput style={styles.textInput} placeholder='Fullname' placeholderTextColor='white' />
+                    <TextInput 
+                        style={styles.textInput} 
+                        placeholder='Username' 
+                        placeholderTextColor='white' 
+                        onChangeText={(username) => {this.validate("username", username)}}
+                    />
                 </View>
                 <View style={styles.inputContainer}>
                     <Icon style={{ color: 'white', marginHorizontal: 8 }} name={'envelope'} size={25} />
-                    <TextInput style={styles.textInput} placeholder='Email' placeholderTextColor='white' />
+                    <TextInput 
+                        style={styles.textInput} 
+                        placeholder='Email' 
+                        placeholderTextColor='white' 
+                        onChangeText={(email) => {this.validate("email", email)}}
+                    />
                 </View>
                 <View style={styles.inputContainer}>
                     <Icon style={{ color: 'white', marginHorizontal: 12 }} name={'unlock-alt'} size={25} />
-                    <TextInput style={styles.textInput} placeholder='Password' placeholderTextColor='white' secureTextEntry={true} />
+                    <TextInput 
+                        style={styles.textInput} 
+                        placeholder='Password' 
+                        placeholderTextColor='white' 
+                        secureTextEntry={true} 
+                        onChangeText={(password) => {this.validate("password", password)}}
+                    />
                 </View>
                 <View style={styles.inputContainer}>
                     <Icon style={{ color: 'white', marginHorizontal: 12 }} name={'unlock-alt'} size={25} />
-                    <TextInput style={styles.textInput} placeholder='Re-password' placeholderTextColor='white' secureTextEntry={true} />
+                    <TextInput 
+                        style={styles.textInput} 
+                        placeholder='Re-password' 
+                        placeholderTextColor='white' 
+                        secureTextEntry={true} 
+                        onChangeText={(repassword) => {this.validate("repassword", repassword)}}
+                    />
                 </View>
-                <TouchableOpacity text='SIGNIN' style={styles.buttonContainer}>
+                <TouchableOpacity text='SIGNUP' style={styles.buttonContainer} onPress={()=>{this._register()}}>
                     <Text style={styles.buttonText}>Sign Up</Text>
                 </TouchableOpacity>
 
