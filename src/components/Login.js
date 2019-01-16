@@ -35,9 +35,23 @@ class Login extends Component {
         }
     }
 
+    componentWillMount() {
+        var user = firebase.auth().currentUser;
+        if (user) {
+            // If user has been logined, navigate to Home immediately
+            // Dont know why it does not work
+            Actions.tabs()
+            return
+        }
+    }
+
     _isVerifiedEmail=()=>{ 
         let isVeri = false;
-        isVeri = firebase.auth().currentUser.emailVerified;
+        var user = firebase.auth().currentUser;
+        if (user) {
+            isVeri = user.emailVerified;
+        }
+        
         return isVeri;
     }
 
@@ -59,21 +73,31 @@ class Login extends Component {
 
     _login() {
         Keyboard.dismiss();
-        this.setState({isVerified: this._isVerifiedEmail()})
         if (this.state.emailValid && this.state.passwordValid) {
             firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
             .then(() => {
+                // set it here to handle after logout
+                this.setState({isVerified: this._isVerifiedEmail()})
                 if (this.state.isVerified == false) {
                     Alert.alert(
                         'YOUR EMAIL IS NOT VERIFIED',
-                        'Please check your mail inbox and verify email address first!. Resend email?',
+                        'Please check your mail inbox and verify email address first! Resend email?',
                         [
                             {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-                            {text: 'OK', onPress: () => {this._resendVerifyEmail()}},
+                            {text: 'RESENT EMAIL', onPress: () => {this._resendVerifyEmail()}},
                         ],
                         { cancelable: false }
                     )
-                    return
+                    
+                    // logout it before process login again
+                    return new Promise((resolve, reject) => {
+                        var logout = firebase.auth().signOut()
+                        logout.then(() => {
+                            // do nothing
+                        }).then(() => {
+                            // do nothing
+                        });
+                    })
                 }
                 else {
                     Actions.tabs();
