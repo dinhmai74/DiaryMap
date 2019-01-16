@@ -11,6 +11,7 @@ import Register from './Register';
 import AddEvent from './AddEvent';
 import Event from './Event'
 import Profile from './Profile'
+import Statistic from './Statistic'
 import AppDrawer from './ui/Drawer';
 
 const TabIcon = ({ selected, title, iconName }) => {
@@ -58,7 +59,7 @@ const AppRouter = () => {
         <Router
             navigationBarStyle={navigationBarStyle}
             titleStyle={titleStyle} >
-            <Scene key='auth' tabBarStyle={{ backgroundColor: '#FFFFFF', elevation: 25 }} initial type={ActionConst.RESET} lazy>
+            <Scene key='auth' tabBarStyle={{ backgroundColor: '#FFFFFF', elevation: 25 }} type={ActionConst.RESET} lazy>
                 <Scene
                     key="login"
                     component={Login}
@@ -72,7 +73,7 @@ const AppRouter = () => {
                 />
             </Scene>
 
-            <Scene key='tabs' tabs tabBarStyle={{ backgroundColor: '#FFFFFF', elevation: 25 }} type={ActionConst.RESET} lazy>
+            <Scene key='tabs' tabs tabBarStyle={{ backgroundColor: '#FFFFFF', elevation: 25 }} type={ActionConst.RESET} lazy initial>
                 <Scene
                     key='profile'
                     component={Profile}
@@ -93,7 +94,7 @@ const AppRouter = () => {
                     title='MAP'
                     iconName='map-marked-alt'
                     icon={TabIcon}
-                    initial
+                    //initial
                 />
                 <Scene
                     key='album'
@@ -108,6 +109,14 @@ const AppRouter = () => {
                     title='CALENDAR'
                     iconName='calendar-alt'
                     icon={TabIcon}
+                />
+                <Scene
+                    key='statistic'
+                    component={Statistic}
+                    title='STATISTIC'
+                    iconName='chart-pie'
+                    icon={TabIcon}
+                    initial
                 />
 
             </Scene>

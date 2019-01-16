@@ -3,7 +3,7 @@ import {View, Text} from 'react-native';
 
 const CustomCard = (props) => {
     return (
-        <View style={[styles.containerStyle, props.style]}>
+        <View style={Object.assign(styles.containerStyle, props.style)}>
             <Text style={styles.title}>
                 {props.title}
             </Text>
@@ -22,11 +22,11 @@ const styles = {
         shadowOffset: {width: 0, height: 10},
         shadowOpacity: 0.1,
         shadowRadius: 2,
-        elevation: 1,
+        elevation: 3,
         marginLeft: 3,
         marginRight: 3,
         marginTop: 3,
-        padding: 5
+        padding: 5,
     },
     title: {
         fontWeight: 'bold',
