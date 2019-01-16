@@ -7,7 +7,8 @@ import {
     View,
     Image,
     TextInput,
-    TouchableOpacity
+    TouchableOpacity,
+    ScrollView
 } from 'react-native';
 import RNFetchBlob from 'rn-fetch-blob';
 import { ProgressDialog, ConfirmDialog } from 'react-native-simple-dialogs';
@@ -92,90 +93,92 @@ export default class Profile extends Component {
             })
     }
 
-    editUsername=()=>{
-        this.setState({usrDialogVisible: true})
+    editUsername = () => {
+        this.setState({ usrDialogVisible: true })
     }
 
-    confirmEditUsername=()=>{
+    confirmEditUsername = () => {
         // check username regex -> update new username here
 
         // this line in the end
-        this.setState({usrDialogVisible: false})
+        this.setState({ usrDialogVisible: false })
     }
 
-    changePassword=()=>{
-        this.setState({passDialogVisible: true})
+    changePassword = () => {
+        this.setState({ passDialogVisible: true })
     }
 
-    confirmChangePassword=()=>{
+    confirmChangePassword = () => {
         // check pass + re-pass regex -> update new password here
 
         // this line in the end
-        this.setState({passDialogVisible: false})
+        this.setState({ passDialogVisible: false })
     }
 
-    logout=()=>{
+    logout = () => {
         // write confirm logout Alert here
     }
 
     render() {
         return (
             <View style={styles.container}>
-                <ProgressDialog
-                    visible={this.state.progressVisible}
-                    title="Changing avatar"
-                    message="Please wait..."
-                />
-                <ConfirmDialog
-                    title='Change username'
-                    visible={this.state.usrDialogVisible}
-                    onTouchOutside={() => this.setState({usrDialogVisible: false})}
-                    positiveButton={{
-                        title: "CHANGE USERNAME",
-                        onPress: this.confirmEditUsername
-                    }}
-                    negativeButton={{
-                        title: "CANCEL",
-                        onPress: () => this.setState({usrDialogVisible: false})
-                }}>
-                    <TextInput placeholder={'New username...'} />
-                </ConfirmDialog>
-                <ConfirmDialog
-                    title="Change password"
-                    visible={this.state.passDialogVisible}
-                    onTouchOutside={() => this.setState({passDialogVisible: false})}
-                    positiveButton={{
-                        title: "CHANGE PASSWORD",
-                        onPress: this.confirmChangePassword
-                    }}
-                    negativeButton={{
-                        title: "CANCEL",
-                        onPress: () => this.setState({passDialogVisible: false})
-                    }}>
+                <ScrollView>
+                    <ProgressDialog
+                        visible={this.state.progressVisible}
+                        title="Changing avatar"
+                        message="Please wait..."
+                    />
+                    <ConfirmDialog
+                        title='Change username'
+                        visible={this.state.usrDialogVisible}
+                        onTouchOutside={() => this.setState({ usrDialogVisible: false })}
+                        positiveButton={{
+                            title: "CHANGE USERNAME",
+                            onPress: this.confirmEditUsername
+                        }}
+                        negativeButton={{
+                            title: "CANCEL",
+                            onPress: () => this.setState({ usrDialogVisible: false })
+                        }}>
+                        <TextInput placeholder={'New username...'} />
+                    </ConfirmDialog>
+                    <ConfirmDialog
+                        title="Change password"
+                        visible={this.state.passDialogVisible}
+                        onTouchOutside={() => this.setState({ passDialogVisible: false })}
+                        positiveButton={{
+                            title: "CHANGE PASSWORD",
+                            onPress: this.confirmChangePassword
+                        }}
+                        negativeButton={{
+                            title: "CANCEL",
+                            onPress: () => this.setState({ passDialogVisible: false })
+                        }}>
                         <TextInput placeholder={'New password...'} />
                         <TextInput placeholder={'Re-enter new password...'} />
                     </ConfirmDialog>
-                <View style={styles.header}></View>
-                <TouchableOpacity style={styles.avatarContainer} onPress={this.openImagePicker}>
-                    <Image style={styles.avatar} source={{ uri: this.state.avatar }} />
-                </TouchableOpacity>
-                <View style={styles.body}>
-                    <View style={styles.bodyContent}>
-                        <Text style={styles.name}>{this.state.name}</Text>
-                        <Text style={styles.info}>{this.state.email}</Text>
-                        <Text style={styles.description}></Text>
+                    <View style={styles.header}></View>
+                    <TouchableOpacity style={styles.avatarContainer} onPress={this.openImagePicker}>
+                        <Image style={styles.avatar} source={{ uri: this.state.avatar }} />
+                    </TouchableOpacity>
+                    <View style={styles.body}>
+                        <View style={styles.bodyContent}>
+                            <Text style={styles.name}>{this.state.name}</Text>
+                            <Text style={styles.info}>{this.state.email}</Text>
+                            <Text style={styles.description}></Text>
 
-                        <TouchableOpacity style={styles.buttonContainer} onPress={this.editUsername}>
-                            <Text>Edit Username</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.buttonContainer} onPress={this.changePassword}>
-                            <Text>Change Password</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.buttonContainer} onPress={this.logout}>
-                            <Text>Logout</Text>
-                        </TouchableOpacity>
+                            <TouchableOpacity style={styles.buttonContainer} onPress={this.editUsername}>
+                                <Text>Edit Username</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.buttonContainer} onPress={this.changePassword}>
+                                <Text>Change Password</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.buttonContainer} onPress={this.logout}>
+                                <Text>Logout</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                </View>
+                </ScrollView>
             </View>
         );
     }
