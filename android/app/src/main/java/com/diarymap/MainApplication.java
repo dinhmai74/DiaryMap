@@ -3,14 +3,17 @@ package com.diarymap;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import com.arttitude360.reactnative.rngoogleplaces.RNGooglePlacesPackage;
+import com.RNFetchBlob.RNFetchBlobPackage;
+import com.oblador.vectoricons.VectorIconsPackage;
 import com.airbnb.android.react.maps.MapsPackage;
+import com.arttitude360.reactnative.rngoogleplaces.RNGooglePlacesPackage;
+import com.imagepicker.ImagePickerPackage;
+import com.arttitude360.reactnative.rngoogleplaces.RNGooglePlacesPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
-import com.airbnb.android.react.maps.MapsPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,9 +30,11 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new RNGooglePlacesPackage(),
+            new RNFetchBlobPackage(),
+            new VectorIconsPackage(),
             new MapsPackage(),
-            new VectorIconsPackage()
+            new RNGooglePlacesPackage(),
+            new ImagePickerPackage()
       );
     }
 

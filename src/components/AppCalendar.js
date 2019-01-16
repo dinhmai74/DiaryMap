@@ -1,34 +1,49 @@
 import React, { Component } from 'react';
 import moment from 'moment'
 import { Text, View, StyleSheet } from 'react-native';
-import { Calendar, CalendarList, Agenda, InfiniteAgenda } from 'react-native-calendars';
-import Item from './Item'
+import { Agenda } from 'react-native-calendars';
+import Item from './ui/Item'
+import firebase from 'firebase';
+import { Actions } from 'react-native-router-flux'
+import AddButton from './ui/AddButton'
 
-var today = moment().format('YYYY-MM-DD');
-var stime = '2019-01-05T07:34:00+07:00';
-var time = moment(stime).format();
-
-data={
-    '2018-01-06':[{title:'Chào ngày mới', text:'Xin chào\nHôm nay là thứ 2'}, {title:'Chào ngày mới 2', text:'Xin chào\nHôm nay là thứ 2'}],
-    '2018-01-07':[{title:'Chào ngày 3', text:'Xin chào\nHôm nay là thứ 3'}],
-    '2018-01-09':[],
-    '2019-01-01':[{title:'Chào ngày mới12', text:'Xin chào\nHôm nay là thứ 212'}, {title:'Chào ngày mới 2231', text:'Xin chào\nHôm nay là thứ 212'}],
-    '2019-01-05':[{title:'Chào ngày 3', text:'Xin chào\nHôm nay là thứ 3'}],
-    '2019-01-06':[{title:'Chào ngày mới', text:'Xin chào\nHôm nay là thứ 2Hôm nay là thứ 2Hôm nay là thứ 2Hôm nay là thứ 2Hôm nay là thứ 2Hôm nay là thứ 2Hôm nay là thứ 2Hôm nay là thứ 2Hôm nay là thứ 2Hôm nay là thứ 2Hôm nay là thứ 2Hôm nay là thứ 2Hôm nay là thứ 2'}, {title:'Chào ngày mới 2', text:'Xin chào\nHôm nay là thứ 2'}],
-    '2019-01-08':[{title:'Chào ngày 3', text:'Xin chào\nHôm nay là thứ 3\nXin chào\nHôm nay là thứ 3\nXin chào\nHôm nay là thứ 3\nXin chào\nHôm nay là thứ 3\nXin chào\nHôm nay là thứ 3\nXin chào\nHôm nay là thứ 3\nXin chào\nHôm nay là thứ 3\nXin chào\nHôm nay là thứ 3\nXin chào\nHôm nay là thứ 3\nXin chào\nHôm nay là thứ 3\nXin chào\nHôm nay là thứ 3\n'}],
-    '2019-01-23':[{title:'Chào ngày 23', text:'Xin chào\nHôm nay là thứ 3'}],
-    '2019-01-09':[],
-    '2019-02-06':[{title:'Chào ngày mới', text:'Xin chào\nHôm nay là thứ 2'}, {title:'Chào ngày mới 2', text:'Xin chào\nHôm nay là thứ 2'}],
-    '2019-02-08':[{title:'Chào ngày 3', text:'Xin chào\nHôm nay là thứ 3'}],
-    '2019-02-09':[]
-}
-
-event={}
+var event = {}
 
 class AppCalendar extends Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            refresh: false,
+            dataSource: this.getAllEvent(),
+        }
+    }
+
+    componentDidMount(){
+        Actions.refresh();
+    }
+
+    getAllEvent() {
+        var events = {};
+        firebase.database().ref('event').orderByChild('time').on('value', (dataSnapshot) => {
+            dataSnapshot.forEach((childSnapshot) => {
+                var item = childSnapshot.val();
+                if (item.userid === firebase.auth().currentUser.uid) {
+                    var k = moment(item.time).format('YYYY-MM-DD').toString();
+                    if (k in events)
+                        events[k].push(item);
+                    else
+                        events[k] = [item];
+                };
+            });
+            try { this.setState({ refresh: !this.state.refresh }); }
+            catch{ () => { } };
+        })
+        return events;
+    }
+
     render() {
         return (
-        <View style={{paddingTop: 50, paddingBottom: 50, flex: 1}}>
+        <View style={{marginTop: 50, marginBottom: 50, flex: 1}}>
             <Agenda  
                 items={event}
                 // onDayPress={(day)=>{alert(moment(day).format('DD-MM-YYYY'))}}
@@ -40,6 +55,7 @@ class AppCalendar extends Component {
                 // renderDay={this.renderDay}
                 rowHasChanged={this.rowHasChanged}
             />
+        <AddButton/>
         </View>
     )};
 
@@ -50,7 +66,7 @@ class AppCalendar extends Component {
         let end = moment(selected.dateString).endOf('month');
         while (begin.isSameOrBefore(end)) {
             let d = begin.format('YYYY-MM-DD');
-            let value = data[d];
+            let value = this.state.dataSource[d];
             event[d] = value ? value : [];
             begin.add(1, 'days');
         };
@@ -82,7 +98,9 @@ class AppCalendar extends Component {
         //     <Text style={styles.itemTitle}>{item.title}</Text>
         //     <Text style={styles.itemText} numberOfLines={3}>{item.text}</Text>
         // </View>
-        <Item item={item} />
+        <View style={{paddingRight: 5}}>
+            <Item item={item} />
+        </View>
         );
     };
 
