@@ -55,7 +55,7 @@ export default class Profile extends Component {
         ImagePicker.showImagePicker(options, (response) => {
 
             if (response.didCancel) {
-                alert('User cancelled image picker');
+                
             } else if (response.error) {
                 alert('ImagePicker Error: ', response.error);
             } else {
@@ -340,7 +340,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 20,
+        marginBottom: 5,
         width: 250,
         borderRadius: 30,
         backgroundColor: "#00BFFF",

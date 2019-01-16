@@ -27,6 +27,7 @@ const chartConfig = {
 export default class Statistic extends Component {
     constructor(props) {
         super(props)
+        this.props.dataSource = null;
 
         this.state = {
             countData: []
@@ -74,23 +75,34 @@ export default class Statistic extends Component {
         }
         return listMonth;
     }
-
-    data = () =>{
-        const cdata = this.getCountData();
-        const clist = this.getListMonth();
+    
+    dataS = () =>{
         return({
-        labels: clist,
+        labels: this.getListMonth(),
         datasets: [{
-            data: cdata,
+            data: this.getCountData(),
             color: (opacity = 1) => `rgba(7, 214, 255, ${opacity})` // optional
         }]
     })}
+
+    componentWillMount(){
+        this.props.dataSource = this.dataS();
+    }
 
     render() {
         return (
             <View style={{ paddingTop: 55, flex: 1, height: '100%' }}>
                 <ScrollView>
-
+                    <CustomCard
+                        style={{ elevation: 3, margin: 10 }}
+                        title={'EVENT COUNTING'}>
+                        <LineChart
+                            data={this.props.dataSource}
+                            width={screenWidth - 20}
+                            height={180}
+                            chartConfig={chartConfig}
+                        />
+                    </CustomCard>
                 </ScrollView>
             </View>
         )
