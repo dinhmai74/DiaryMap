@@ -24,18 +24,6 @@ const chartConfig = {
     color: ((opacity = 1) => `rgba(2, 174, 209, ${opacity})`)
 }
 
-const data = {
-    labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-    datasets: [{
-        data: [20, 45, 28, 80, 99, 43],
-        color: (opacity = 1) => `rgba(7, 214, 255, ${opacity})` // optional
-    }]
-}
-
-createData=()=>{
-    const numOfMonth = 6;
-}
-
 export default class Statistic extends Component {
     constructor(props) {
         super(props)
@@ -45,24 +33,64 @@ export default class Statistic extends Component {
         }
     }
 
-    getCountData = () => {
+    createMonthData = () => {
+        const numOfMonth = 6;
+        const now = moment().format();
+        var listMonth = [];
 
+        var tmp = moment().endOf('month');
+        tmp.add(-15, 'd');
+        for (let i = 0; i < numOfMonth; i++) {
+            listMonth.unshift(moment(tmp).add(-i, 'M').format('YYYY-MM'));
+        }
+        return listMonth;
     }
+
+    getCountData = () => {
+        let events = [0, 0, 0, 0, 0, 0];
+        const listM = this.createMonthData();
+        firebase.database().ref('event').orderByChild('time').once('value', (dataSnapshot) => {
+            dataSnapshot.forEach((childSnapshot) => {
+                let item = childSnapshot.val();
+                if (item.userid === firebase.auth().currentUser.uid) {
+                    let k = moment(item.time).format('YYYY-MM');
+                    for (let i = 0; i < 6; i++) {
+                        if (k == listM[i])
+                            events[i] = events[i] + 1;
+                    }
+                }
+            });
+            try { this.setState({ refresh: !this.state.refresh, dataSource: events }); }
+            catch{ () => { } }
+        })
+        return events;
+    }
+
+    getListMonth=()=>{
+        var listMonth = [];
+        const data = this.createMonthData();
+        for(let i = 0; i < 6; i++){
+            listMonth.push(moment(data[i], 'YYYY-MM').format('MMM'));
+        }
+        return listMonth;
+    }
+
+    data = () =>{
+        const cdata = this.getCountData();
+        const clist = this.getListMonth();
+        return({
+        labels: clist,
+        datasets: [{
+            data: cdata,
+            color: (opacity = 1) => `rgba(7, 214, 255, ${opacity})` // optional
+        }]
+    })}
 
     render() {
         return (
             <View style={{ paddingTop: 55, flex: 1, height: '100%' }}>
                 <ScrollView>
-                    <CustomCard
-                        style={{elevation: 3, margin: 10}}
-                        title={'EVENT COUNTING'}>
-                        <LineChart
-                            data={data}
-                            width={screenWidth-20}
-                            height={180}
-                            chartConfig={chartConfig}
-                        />
-                    </CustomCard>
+
                 </ScrollView>
             </View>
         )

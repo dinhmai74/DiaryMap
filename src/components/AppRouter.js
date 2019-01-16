@@ -59,7 +59,7 @@ const AppRouter = () => {
         <Router
             navigationBarStyle={navigationBarStyle}
             titleStyle={titleStyle} >
-            <Scene key='auth' tabBarStyle={{ backgroundColor: '#FFFFFF', elevation: 25 }} type={ActionConst.RESET} lazy>
+            <Scene key='auth' tabBarStyle={{ backgroundColor: '#FFFFFF', elevation: 25 }} initial type={ActionConst.RESET} lazy>
                 <Scene
                     key="login"
                     component={Login}
@@ -73,7 +73,7 @@ const AppRouter = () => {
                 />
             </Scene>
 
-            <Scene key='tabs' tabs tabBarStyle={{ backgroundColor: '#FFFFFF', elevation: 25 }} type={ActionConst.RESET} lazy initial>
+            <Scene key='tabs' tabs tabBarStyle={{ backgroundColor: '#FFFFFF', elevation: 25 }} type={ActionConst.RESET} lazy>
                 <Scene
                     key='profile'
                     component={Profile}
@@ -94,7 +94,7 @@ const AppRouter = () => {
                     title='MAP'
                     iconName='map-marked-alt'
                     icon={TabIcon}
-                    //initial
+                    initial
                 />
                 <Scene
                     key='album'
@@ -116,7 +116,6 @@ const AppRouter = () => {
                     title='STATISTIC'
                     iconName='chart-pie'
                     icon={TabIcon}
-                    initial
                 />
 
             </Scene>
