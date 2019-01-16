@@ -54,13 +54,21 @@ class Register extends Component {
         if (this.state.emailValid && this.state.usernameValid && this.state.passwordValid && this.state.repasswordValid) {
             firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.password)
                 .then(() => {
-                    Alert.alert(
-                        'SIGNUP SUCCESSFUL'
-                        // Navigate Home 
-                    )
-
-                    // Update displayName
                     var user = firebase.auth().currentUser
+
+                    // Send verification email
+                    if (user) {
+                        user.sendEmailVerification().then(function () {
+                            Alert.alert(
+                                'SIGNUP SUCCESSFUL',
+                                'An email is sent to your email address. Please verify it before login.'
+                            )
+                        }).catch(function (error) {
+                            // An error happened.
+                        });
+                    }
+                    
+                    // Update displayName
                     if (user) {
                         user.updateProfile({
                             displayName: this.state.username,

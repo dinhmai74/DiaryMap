@@ -37,16 +37,25 @@ class Login extends Component {
     _login() {
         Keyboard.dismiss();
         if (this.state.emailValid && this.state.passwordValid) {
-            firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
-            .then(() => {
-                Actions.tabs();
-            })
-            .catch(function(error) {
+            if (firebase.auth().currentUser.emailVerified == false) {
                 Alert.alert(
-                    'LOGIN FAILED',
-                    'Wrong Username/Email or Password'
+                    'YOUR EMAIL IS NOT VERIFIED',
+                    'Please check your mail inbox and verify email address first!'
                 )
-            });
+                return
+            }
+            else {
+                firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
+                .then(() => {
+                    Actions.tabs();
+                })
+                .catch(function (error) {
+                    Alert.alert(
+                        'LOGIN FAILED',
+                        'Wrong Username/Email or Password'
+                    )
+                });
+            }
         } 
         else {
             if (this.state.email == '') {
