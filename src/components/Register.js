@@ -99,7 +99,7 @@ class Register extends Component {
             else if (!this.state.usernameValid) {
                 Alert.alert(
                     'SIGNUP FAILED',
-                    'Username invalid. Username must uses characters within [a-zA-Z0-9_] and at least 3.'
+                    'Username invalid. Username does not contains numbers and any special characters!'
                 )
             }
             else if (this.state.email == '') {

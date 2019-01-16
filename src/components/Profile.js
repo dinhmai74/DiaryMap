@@ -8,11 +8,14 @@ import {
     Image,
     TextInput,
     TouchableOpacity,
+    Alert,
     ScrollView
 } from 'react-native';
 import RNFetchBlob from 'rn-fetch-blob';
 import { ProgressDialog, ConfirmDialog } from 'react-native-simple-dialogs';
 import ImagePicker from 'react-native-image-picker';
+import { USERNAME, PASSWORD } from './Regexs';
+import {Actions} from 'react-native-router-flux';
 
 const Blob = RNFetchBlob.polyfill.Blob;
 const fs = RNFetchBlob.fs;
@@ -39,7 +42,12 @@ export default class Profile extends Component {
             progressVisible: false,
 
             usrDialogVisible: false,
-            passDialogVisible: false
+            passDialogVisible: false,
+            logoutDialogVisible: false,
+
+            newUsername: '',
+            newPassword: '',
+            newRePassword: '',
         }
     }
 
@@ -99,9 +107,33 @@ export default class Profile extends Component {
 
     confirmEditUsername = () => {
         // check username regex -> update new username here
+        if (this.state.newUsername == '') {
+            alert('Please enter the new username!')
+            return
+        } 
+        else if (USERNAME.test(this.state.newUsername) == false) {
+            alert('Username invalid. Username does not contains numbers and any special characters!')
+            return
+        }
+        else {
+            return new Promise((resolve, reject) => {
+                var update = firebase.auth().currentUser.updateProfile({
+                    displayName: this.state.newUsername,
+                })
+                update.then(() => {
+                    this.setState({
+                        name: this.state.newUsername,
+                        newUsername: ''
+                    })
 
-        // this line in the end
-        this.setState({ usrDialogVisible: false })
+                    this.setState({
+                        usrDialogVisible: false
+                    })
+                }).then(() => {
+                    alert('Update username successfully!')
+                });
+            })
+        }
     }
 
     changePassword = () => {
@@ -110,13 +142,58 @@ export default class Profile extends Component {
 
     confirmChangePassword = () => {
         // check pass + re-pass regex -> update new password here
+        if (this.state.newPassword == '') {
+            alert('Please enter new password')
+            return
+        }
+        else if (PASSWORD.test(this.state.newPassword) == false) {
+            alert('Password invalid. Password must uses characters within [a-zA-Z0-9] and at least 6.')
+            return
+        }
+        else if (this.state.newRePassword == '') {
+            alert('Please reenter your new password')
+            return
+        }        
+        else if (this.state.newPassword != this.state.newRePassword) {
+            alert('Repassword does not matched. Please check your repassword.')
+            return
+        }
+        else {
+            return new Promise((resolve, reject) => {
+                var update = firebase.auth().currentUser.updatePassword(this.state.newPassword)
+                update.then(() => {
+                    this.setState({
+                        newPassword: '',
+                        newRePassword: '',
+                    })
 
-        // this line in the end
-        this.setState({ passDialogVisible: false })
+                    this.setState({
+                        passDialogVisible: false
+                    })
+                }).then(() => {
+                    alert('Update password successfully!')
+                });
+            })
+        }        
     }
 
     logout = () => {
-        // write confirm logout Alert here
+        this.setState({ logoutDialogVisible: true })
+    }
+
+    confirmLogOut = () => {
+        return new Promise((resolve, reject) => {
+            var logout = firebase.auth().signOut()
+            logout.then(() => {
+                this.setState({
+                    logoutDialogVisible: false
+                })
+
+                Actions.auth()
+            }).then(() => {
+                // do nothing
+            });
+        })
     }
 
     render() {
@@ -133,14 +210,17 @@ export default class Profile extends Component {
                         visible={this.state.usrDialogVisible}
                         onTouchOutside={() => this.setState({ usrDialogVisible: false })}
                         positiveButton={{
-                            title: "CHANGE USERNAME",
+                            title: "CHANGE",
                             onPress: this.confirmEditUsername
                         }}
                         negativeButton={{
                             title: "CANCEL",
                             onPress: () => this.setState({ usrDialogVisible: false })
                         }}>
-                        <TextInput placeholder={'New username...'} />
+                        <TextInput 
+                            placeholder={'New username...'} 
+                            onChangeText={(newUsername) => {this.setState({newUsername: newUsername})}}    
+                        />
                     </ConfirmDialog>
                     <ConfirmDialog
                         title="Change password"
@@ -154,8 +234,29 @@ export default class Profile extends Component {
                             title: "CANCEL",
                             onPress: () => this.setState({ passDialogVisible: false })
                         }}>
-                        <TextInput placeholder={'New password...'} />
-                        <TextInput placeholder={'Re-enter new password...'} />
+                        <TextInput 
+                            placeholder={'New password...'} 
+                            secureTextEntry={true}
+                            onChangeText={(newPassword) => {this.setState({newPassword: newPassword})}}
+                        />
+                        <TextInput 
+                            placeholder={'Re-enter new password...'} 
+                            secureTextEntry={true}
+                            onChangeText={(newRePassword) => {this.setState({newRePassword: newRePassword})}}
+                        />
+                    </ConfirmDialog>
+                    <ConfirmDialog
+                        title="Do you want to Logout?"
+                        visible={this.state.logoutDialogVisible}
+                        onTouchOutside={() => this.setState({ logoutDialogVisible: false })}
+                        positiveButton={{
+                            title: "LOG OUT",
+                            onPress: this.confirmLogOut
+                        }}
+                        negativeButton={{
+                            title: "CANCEL",
+                            onPress: () => this.setState({ logoutDialogVisible: false })
+                        }}>
                     </ConfirmDialog>
                     <View style={styles.header}></View>
                     <TouchableOpacity style={styles.avatarContainer} onPress={this.openImagePicker}>
@@ -173,8 +274,8 @@ export default class Profile extends Component {
                             <TouchableOpacity style={styles.buttonContainer} onPress={this.changePassword}>
                                 <Text>Change Password</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={styles.buttonContainer} onPress={this.logout}>
-                                <Text>Logout</Text>
+                            <TouchableOpacity style={styles.buttonContainer2} onPress={this.logout}>
+                                <Text>LOG OUT</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -243,5 +344,16 @@ const styles = StyleSheet.create({
         width: 250,
         borderRadius: 30,
         backgroundColor: "#00BFFF",
+    },
+    buttonContainer2: {
+        marginTop: 10,
+        height: 45,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 20,
+        width: 250,
+        borderRadius: 30,
+        backgroundColor: "#DD4C35",
     },
 });
