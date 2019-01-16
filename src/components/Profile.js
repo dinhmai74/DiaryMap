@@ -6,10 +6,11 @@ import {
     Text,
     View,
     Image,
+    TextInput,
     TouchableOpacity
 } from 'react-native';
 import RNFetchBlob from 'rn-fetch-blob';
-import { ProgressDialog } from 'react-native-simple-dialogs';
+import { ProgressDialog, ConfirmDialog } from 'react-native-simple-dialogs';
 import ImagePicker from 'react-native-image-picker';
 
 const Blob = RNFetchBlob.polyfill.Blob;
@@ -34,7 +35,10 @@ export default class Profile extends Component {
             name: firebase.auth().currentUser.displayName,
             email: firebase.auth().currentUser.email,
 
-            progressVisible: false
+            progressVisible: false,
+
+            usrDialogVisible: false,
+            passDialogVisible: false
         }
     }
 
@@ -88,14 +92,69 @@ export default class Profile extends Component {
             })
     }
 
+    editUsername=()=>{
+        this.setState({usrDialogVisible: true})
+    }
+
+    confirmEditUsername=()=>{
+        // check username regex -> update new username here
+
+        // this line in the end
+        this.setState({usrDialogVisible: false})
+    }
+
+    changePassword=()=>{
+        this.setState({passDialogVisible: true})
+    }
+
+    confirmChangePassword=()=>{
+        // check pass + re-pass regex -> update new password here
+
+        // this line in the end
+        this.setState({passDialogVisible: false})
+    }
+
+    logout=()=>{
+        // write confirm logout Alert here
+    }
+
     render() {
         return (
             <View style={styles.container}>
                 <ProgressDialog
                     visible={this.state.progressVisible}
-                    title="Processing"
+                    title="Changing avatar"
                     message="Please wait..."
                 />
+                <ConfirmDialog
+                    title='Change username'
+                    visible={this.state.usrDialogVisible}
+                    onTouchOutside={() => this.setState({usrDialogVisible: false})}
+                    positiveButton={{
+                        title: "CHANGE USERNAME",
+                        onPress: this.confirmEditUsername
+                    }}
+                    negativeButton={{
+                        title: "CANCEL",
+                        onPress: () => this.setState({usrDialogVisible: false})
+                }}>
+                    <TextInput placeholder={'New username...'} />
+                </ConfirmDialog>
+                <ConfirmDialog
+                    title="Change password"
+                    visible={this.state.passDialogVisible}
+                    onTouchOutside={() => this.setState({passDialogVisible: false})}
+                    positiveButton={{
+                        title: "CHANGE PASSWORD",
+                        onPress: this.confirmChangePassword
+                    }}
+                    negativeButton={{
+                        title: "CANCEL",
+                        onPress: () => this.setState({passDialogVisible: false})
+                    }}>
+                        <TextInput placeholder={'New password...'} />
+                        <TextInput placeholder={'Re-enter new password...'} />
+                    </ConfirmDialog>
                 <View style={styles.header}></View>
                 <TouchableOpacity style={styles.avatarContainer} onPress={this.openImagePicker}>
                     <Image style={styles.avatar} source={{ uri: this.state.avatar }} />
@@ -106,8 +165,14 @@ export default class Profile extends Component {
                         <Text style={styles.info}>{this.state.email}</Text>
                         <Text style={styles.description}></Text>
 
-                        <TouchableOpacity style={styles.buttonContainer}>
-                            <Text>Edit Profile</Text>
+                        <TouchableOpacity style={styles.buttonContainer} onPress={this.editUsername}>
+                            <Text>Edit Username</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.buttonContainer} onPress={this.changePassword}>
+                            <Text>Change Password</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.buttonContainer} onPress={this.logout}>
+                            <Text>Logout</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
