@@ -13,7 +13,8 @@ class Login extends Component {
             email: '',
             password: '',
             emailValid: false,
-            passwordValid: false
+            passwordValid: false,
+            isVerified: false
         }
     }
 
@@ -34,28 +35,56 @@ class Login extends Component {
         }
     }
 
+    _isVerifiedEmail=()=>{ 
+        let isVeri = false;
+        isVeri = firebase.auth().currentUser.emailVerified;
+        return isVeri;
+    }
+
+    _resendVerifyEmail=()=> {
+        var user = firebase.auth().currentUser
+
+        // Send verification email
+        if (user) {
+            user.sendEmailVerification().then(function () {
+                Alert.alert(
+                    "INFO",
+                    'Verify email was resent to ' + this.state.email + '. Recheck your inbox!'
+                )
+            }).catch(function (error) {
+                // An error happened.
+            });
+        }
+    }
+
     _login() {
         Keyboard.dismiss();
+        this.setState({isVerified: this._isVerifiedEmail()})
         if (this.state.emailValid && this.state.passwordValid) {
-            if (firebase.auth().currentUser.emailVerified == false) {
-                Alert.alert(
-                    'YOUR EMAIL IS NOT VERIFIED',
-                    'Please check your mail inbox and verify email address first!'
-                )
-                return
-            }
-            else {
-                firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
-                .then(() => {
-                    Actions.tabs();
-                })
-                .catch(function (error) {
+            firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.password)
+            .then(() => {
+                if (this.state.isVerified == false) {
                     Alert.alert(
-                        'LOGIN FAILED',
-                        'Wrong Username/Email or Password'
+                        'YOUR EMAIL IS NOT VERIFIED',
+                        'Please check your mail inbox and verify email address first!. Resend email?',
+                        [
+                            {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                            {text: 'OK', onPress: () => {this._resendVerifyEmail()}},
+                        ],
+                        { cancelable: false }
                     )
-                });
-            }
+                    return
+                }
+                else {
+                    Actions.tabs();
+                }
+            })
+            .catch(function (error) {
+                Alert.alert(
+                    'LOGIN FAILED',
+                    'Wrong Username/Email or Password'
+                )
+            });
         } 
         else {
             if (this.state.email == '') {
