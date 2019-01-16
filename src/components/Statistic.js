@@ -27,11 +27,7 @@ const chartConfig = {
 export default class Statistic extends Component {
     constructor(props) {
         super(props)
-        this.props.dataSource = null;
-
-        this.state = {
-            countData: []
-        }
+        this.props.dataSource = {};
     }
 
     createMonthData = () => {
@@ -67,25 +63,26 @@ export default class Statistic extends Component {
         return events;
     }
 
-    getListMonth=()=>{
+    getListMonth = () => {
         var listMonth = [];
         const data = this.createMonthData();
-        for(let i = 0; i < 6; i++){
+        for (let i = 0; i < 6; i++) {
             listMonth.push(moment(data[i], 'YYYY-MM').format('MMM'));
         }
         return listMonth;
     }
-    
-    dataS = () =>{
-        return({
-        labels: this.getListMonth(),
-        datasets: [{
-            data: this.getCountData(),
-            color: (opacity = 1) => `rgba(7, 214, 255, ${opacity})` // optional
-        }]
-    })}
 
-    componentWillMount(){
+    dataS = () => {
+        return ({
+            labels: this.getListMonth(),
+            datasets: [{
+                data: this.getCountData(),
+                color: (opacity = 1) => `rgba(7, 214, 255, ${opacity})` // optional
+            }]
+        })
+    }
+
+    componentWillMount() {
         this.props.dataSource = this.dataS();
     }
 

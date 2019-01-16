@@ -344,6 +344,7 @@ const styles = StyleSheet.create({
         width: 250,
         borderRadius: 30,
         backgroundColor: "#00BFFF",
+        color: 'white'
     },
     buttonContainer2: {
         marginTop: 10,
@@ -355,5 +356,6 @@ const styles = StyleSheet.create({
         width: 250,
         borderRadius: 30,
         backgroundColor: "#DD4C35",
+        color: 'white'
     },
 });
