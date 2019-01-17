@@ -14,7 +14,6 @@ const CustomCard = (props) => {
 
 const styles = {
     containerStyle: {
-        borderWidth: 1,
         borderRadius: 2,
         borderColor: '#ddd',
         borderBottomWidth: 0,
@@ -23,9 +22,7 @@ const styles = {
         shadowOpacity: 0.1,
         shadowRadius: 2,
         elevation: 3,
-        marginLeft: 3,
-        marginRight: 3,
-        marginTop: 3,
+        margin: 7,
         padding: 5,
     },
     title: {

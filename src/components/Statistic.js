@@ -5,8 +5,6 @@ import MapView, { Marker } from 'react-native-maps';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import moment from 'moment';
 import { Actions, ActionConst } from 'react-native-router-flux';
-import DeleteButton from './ui/DeleteButton';
-import { ConfirmDialog, ProgressDialog } from 'react-native-simple-dialogs';
 import {
     LineChart,
     BarChart,
@@ -27,7 +25,13 @@ const chartConfig = {
 export default class Statistic extends Component {
     constructor(props) {
         super(props)
-        this.props.dataSource = {};
+        this.props.dataSource = {
+            labels: [0],
+            datasets: [{
+                data: [0],
+                color: (opacity = 1) => `rgba(7, 214, 255, ${opacity})` // optional
+            }]
+        }
     }
 
     createMonthData = () => {
@@ -64,38 +68,31 @@ export default class Statistic extends Component {
     }
 
     getListMonth = () => {
-        var listMonth = [];
+        var listMonth = [0, 0, 0, 0, 0, 0];
         const data = this.createMonthData();
         for (let i = 0; i < 6; i++) {
-            listMonth.push(moment(data[i], 'YYYY-MM').format('MMM'));
+            listMonth[i] = moment(data[i], 'YYYY-MM').format('MMM');
         }
         return listMonth;
     }
 
-    dataS = () => {
-        return ({
+    render() {
+        const countData = {
             labels: this.getListMonth(),
             datasets: [{
                 data: this.getCountData(),
                 color: (opacity = 1) => `rgba(7, 214, 255, ${opacity})` // optional
             }]
-        })
-    }
+        };
 
-    componentWillMount() {
-        this.props.dataSource = this.dataS();
-    }
-
-    render() {
         return (
             <View style={{ paddingTop: 55, flex: 1, height: '100%' }}>
                 <ScrollView>
                     <CustomCard
-                        style={{ elevation: 3, margin: 10 }}
                         title={'EVENT COUNTING'}>
                         <LineChart
-                            data={this.props.dataSource}
-                            width={screenWidth - 20}
+                            data={countData}
+                            width={screenWidth - 30}
                             height={180}
                             chartConfig={chartConfig}
                         />

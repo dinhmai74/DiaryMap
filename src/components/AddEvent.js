@@ -11,6 +11,7 @@ import RNFetchBlob from 'rn-fetch-blob';
 import moment from 'moment';
 import { Actions } from 'react-native-router-flux';
 import { ProgressDialog } from 'react-native-simple-dialogs';
+import  Rating from 'react-native-easy-rating';
 
 const Blob = RNFetchBlob.polyfill.Blob;
 const fs = RNFetchBlob.fs;
@@ -42,6 +43,7 @@ class AddEvent extends Component {
             title: '',
             userid: firebase.auth().currentUser.uid,
             uri: require('../assets/default-photo.jpg'),
+            emotion: 3,
 
             isDateTimePickerVisible: false,
             disabled: false,
@@ -49,23 +51,35 @@ class AddEvent extends Component {
         }
     }
 
+    iconSelected=()=>{
+        let tmp = require('../assets/default-photo.jpg')
+        return tmp;
+    }
+
+    iconUnselected=()=>{
+        let tmp = require('../assets/logo.png');
+        return tmp;
+    }
+
     render() {
+        const iconSelected = this.iconSelected();
+        const iconUnselected = this.iconUnselected();
         return (
             <View style={{ paddingTop: 58, padding: 5, flex: 1 }}>
-            <ProgressDialog 
-                visible={this.state.progressVisible} 
-                title="Creating event" 
-                message="Please wait..."
-            />
+                <ProgressDialog
+                    visible={this.state.progressVisible}
+                    title="Creating event"
+                    message="Please wait..."
+                />
                 <ScrollView>
-                    <CustomCard title={'TITLE'} style={{ marginVertical: 5 }}>
+                    <CustomCard title={'TITLE'}>
                         <TextInput
                             placeholder={'Title...'}
                             textAlignVertical={'top'}
                             onChangeText={(text) => this.setState({ title: text })}
                             editable={!this.props.disabled} />
                     </CustomCard>
-                    <CustomCard title={'CONTENT'} style={{ marginVertical: 5 }}>
+                    <CustomCard title={'CONTENT'}>
                         <TextInput
                             placeholder={'Write here...'}
                             multiline
@@ -74,7 +88,18 @@ class AddEvent extends Component {
                             onChangeText={(texti) => this.setState({ text: texti })}
                             editable={!this.props.disabled} />
                     </CustomCard>
-                    <CustomCard title={'TIME'} style={{ marginVertical: 5 }}>
+                    <CustomCard title={'EMOTION'}>
+                        <Rating
+                            style={{margin: 15}}
+                            rating={3}
+                            max={5}
+                            iconWidth={26}
+                            iconHeight={26}
+                            iconSelected={iconSelected}
+                            iconUnselected={iconUnselected}
+                            onRate={(rating) => this.setState({ emotion: rating })} />
+                    </CustomCard>
+                    <CustomCard title={'TIME'}>
                         <TouchableOpacity
                             onPress={this._showDateTimePicker}
                             style={{ flexDirection: 'row', alignItems: 'center' }}
@@ -92,7 +117,7 @@ class AddEvent extends Component {
                             mode='datetime'
                         />
                     </CustomCard>
-                    <CustomCard title={'PHOTO'} style={{ marginVertical: 5 }}>
+                    <CustomCard title={'PHOTO'}>
                         <Image
                             source={this.state.uri}
                             style={{ width: 300, height: 200, resizeMode: 'contain', alignSelf: 'center', borderRadius: 10 }}
@@ -130,7 +155,7 @@ class AddEvent extends Component {
                                     latitudeDelta: this.state.coordinate ? 1 : 10,
                                     longitudeDelta: this.state.coordinate ? 1 : 10,
                                 }} >
-                                {this.state.coordinate != null && [this.state.coordinate].map(coords=>(<MapView.Marker coordinate={coords} />))}
+                                {this.state.coordinate != null && [this.state.coordinate].map(coords => (<MapView.Marker coordinate={coords} />))}
                             </MapView>
                         </TouchableOpacity>
                     </CustomCard>
@@ -187,7 +212,7 @@ class AddEvent extends Component {
     };
 
     uploadImage = (uri, mime = 'image/jpeg', name) => {
-        if(this.imagePath == '')
+        if (this.imagePath == '')
             return true;
 
         let imgUri = uri; let uploadBlob = null;
@@ -226,13 +251,14 @@ class AddEvent extends Component {
                     text: this.state.text,
                     time: moment(this.state.time).format(),
                     title: this.state.title,
-                    userid: this.state.userid
+                    userid: this.state.userid,
+                    emotion: this.state.emotion
                 })
-                .then(() => { 
-                    this.setState({ disabled: false, progressVisible: false })
-                    Actions.tabs();
-                })
-                .then(()=>{alert('Memory added')});
+                    .then(() => {
+                        this.setState({ disabled: false, progressVisible: false })
+                        Actions.tabs();
+                    })
+                    .then(() => { alert('Memory added') });
             })
         })
 
