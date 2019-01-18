@@ -7,6 +7,7 @@ import moment from 'moment';
 import { Actions, ActionConst } from 'react-native-router-flux';
 import DeleteButton from './ui/DeleteButton';
 import { ConfirmDialog, ProgressDialog } from 'react-native-simple-dialogs';
+import Rating from 'react-native-rating-simple';
 
 const weekdays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thusday', 'Friday', 'Saturday']
 
@@ -19,6 +20,30 @@ class Event extends Component {
             progressVisible: false,
             isImageViewVisible: false
         }
+    }
+
+    iconSelected=(emotion)=>{
+        let tmp = require('../assets/icons/1.png')
+        switch(emotion) {
+            case 1: tmp = require('../assets/icons/1.png'); break;
+            case 2: tmp = require('../assets/icons/2.png'); break;
+            case 3: tmp = require('../assets/icons/3.png'); break;
+            case 4: tmp = require('../assets/icons/4.png'); break;
+            case 5: tmp = require('../assets/icons/5.png'); break;
+        }
+        return tmp;
+    }
+
+    iconUnselected=(emotion)=>{
+        let tmp = require('../assets/icons/1g.png')
+        switch(emotion) {
+            case 1: tmp = require('../assets/icons/1g.png'); break;
+            case 2: tmp = require('../assets/icons/2g.png'); break;
+            case 3: tmp = require('../assets/icons/3g.png'); break;
+            case 4: tmp = require('../assets/icons/4g.png'); break;
+            case 5: tmp = require('../assets/icons/5g.png'); break;
+        }
+        return tmp;
     }
 
     pressImage = () => {
@@ -90,6 +115,19 @@ class Event extends Component {
                             <Text style={styles.text}>{item.address}</Text>
                         </View>
                         <Text style={styles.title}>{item.title}</Text>
+                        <View style={{paddingBottom: 10}}>
+                            <Rating
+                                rating={item.emotion}
+                                fullStar={
+                                    <Image source={this.iconSelected(item.emotion)} style={{ width: 20, height: 20, marginLeft: 4 }} />
+                                }
+                                emptyStar={
+                                    <Image source={this.iconUnselected(item.emotion)} style={{ width: 20, height: 20, marginLeft: 4 }} />
+                                }
+                                starSize={30}
+                                viewOnly={true}
+                            />
+                        </View>
                         <Text style={styles.text}>{item.text}</Text>
                         <MapView
                                 style={styles.map}
