@@ -147,7 +147,7 @@ export default class Statistic extends Component {
                         title={'EMOTION'}>
                         <View style={{flexDirection: 'row'}}>
                             <View style={{flexDirection: 'column', justifyContent: 'space-between', paddingVertical: 10}}>
-                                {emotionImage.map(uri => (<Image source={uri} style={{width: 18, height: 18}} />))}
+                                {emotionImage.reverse().map(uri => (<Image source={uri} style={{width: 18, height: 18}} />))}
                             </View>
                             <AreaChart
                                 style={{ height: 180, marginHorizontal: 10, flex: 1}}
