@@ -3,6 +3,7 @@ import { Text, View, StyleSheet, TextInput, TouchableOpacity, Image, ImageBackgr
 import Icon from 'react-native-vector-icons/FontAwesome'
 import firebase from 'firebase'
 import { PASSWORD, EMAIL, USERNAME } from './Regexs'
+import Toast, {DURATION} from 'react-native-easy-toast';
 
 class Register extends Component {
     constructor(props) {
@@ -75,10 +76,7 @@ class Register extends Component {
                         }).then(function () {
                             // Do nothing
                         }).catch(function (error) {
-                            Alert.alert(
-                                'ERROR',
-                                'Cannot update your username.'
-                            )
+                            this.refs.toast.show('Cannot update your username!', 1000)
                         });
                     }
                 }).catch(function (error) {
@@ -91,52 +89,28 @@ class Register extends Component {
         }
         else {
             if (this.state.username == '') {
-                Alert.alert(
-                    'SIGNUP FAILED',
-                    'Please enter your username.'
-                )
+                this.refs.toast.show('Please enter your username!', 1000)
             }
             else if (!this.state.usernameValid) {
-                Alert.alert(
-                    'SIGNUP FAILED',
-                    'Username invalid. Username does not contains numbers and any special characters!'
-                )
+                this.refs.toast.show('Username invalid. Username does not contains numbers and any special characters!', 1000)
             }
             else if (this.state.email == '') {
-                Alert.alert(
-                    'SIGNUP FAILED',
-                    'Please enter your email.'
-                )
+                this.refs.toast.show('Please enter your email!', 1000)
             }
             else if (!this.state.emailValid) {
-                Alert.alert(
-                    'SIGNUP FAILED',
-                    'Email invalid. Please check your email format.'
-                )
+                this.refs.toast.show('Email invalid. Please check your email format.', 1000)
             }
             else if (this.state.password == '') {
-                Alert.alert(
-                    'SIGNUP FAILED',
-                    'Please enter your password'
-                )
+                this.refs.toast.show('Please enter your password!', 1000)
             }
             else if (!this.state.passwordValid) {
-                Alert.alert(
-                    'SIGNUP FAILED',
-                    'Password invalid. Password must uses characters within [a-zA-Z0-9] and at least 6.'
-                )
+                this.refs.toast.show('Password invalid. Password must uses characters within [a-zA-Z0-9] and at least 6!', 1000)
             }
             else if (this.state.repassword == '') {
-                Alert.alert(
-                    'SIGNUP FAILED',
-                    'Please reenter your password.'
-                )
+                this.refs.toast.show('Please reenter your password!', 1000)
             }
             else if (!this.state.repasswordValid) {
-                Alert.alert(
-                    'SIGNUP FAILED',
-                    'Repassword does not matched. Please check your repassword.'
-                )
+                this.refs.toast.show('Repassword does not matched. Please check your repassword!', 1000)
             }
         }
     }
@@ -144,6 +118,10 @@ class Register extends Component {
     render() {
         return (
             <ImageBackground source={require('../assets/letter.png')} style={styles.container}>
+                <Toast ref="toast" 
+                    textStyle={{color:'white', fontSize:16}} 
+                    style={{backgroundColor:'black', borderRadius:50, opacity:0.8}}
+                />
                 <View>
                     <Image source={require('../assets/logo.png')} style={{ height: 160, resizeMode: 'center', alignSelf: 'center' }} />
                     <View style={styles.inputContainer}>

@@ -16,6 +16,7 @@ import { ProgressDialog, ConfirmDialog } from 'react-native-simple-dialogs';
 import ImagePicker from 'react-native-image-picker';
 import { USERNAME, PASSWORD } from './Regexs';
 import {Actions} from 'react-native-router-flux';
+import Toast, {DURATION} from 'react-native-easy-toast';
 
 const Blob = RNFetchBlob.polyfill.Blob;
 const fs = RNFetchBlob.fs;
@@ -57,7 +58,8 @@ export default class Profile extends Component {
             if (response.didCancel) {
                 
             } else if (response.error) {
-                alert('ImagePicker Error: ', response.error);
+                //alert('ImagePicker Error: ', response.error);
+                this.refs.toast.show(<View><Text>ImagePicker Error: + {response.error}</Text></View>, 1000)
             } else {
                 return new Promise((resolve, reject) => {
                     var up = this.uploadImage(response.path, 'image/jpeg', this.state.uid + '.png');
@@ -92,10 +94,12 @@ export default class Profile extends Component {
                 this.setState({ avatar: url });
                 firebase.auth().currentUser.updateProfile({
                     photoURL: url
-                }).then(function () {
-                    alert('User\'s avatar changed');
-                }).catch(function (error) {
-                    alert('User\'s avatar error: \n' + error);
+                }).then(() => {
+                    //alert('User\'s avatar changed');
+                    this.refs.toast.show('User\'s avatar changed', 1000);
+                }).catch((error) => {
+                    //alert('User\'s avatar error: \n' + error);
+                    this.refs.toast.show(<View><Text>User's avatar error: + {error}</Text></View>, 1000)
                 });
 
             })
@@ -108,11 +112,11 @@ export default class Profile extends Component {
     confirmEditUsername = () => {
         // check username regex -> update new username here
         if (this.state.newUsername == '') {
-            alert('Please enter the new username!')
+            this.refs.toast.show('Please enter the new username!', 1000)
             return
         } 
         else if (USERNAME.test(this.state.newUsername) == false) {
-            alert('Username invalid. Username does not contains numbers and any special characters!')
+            this.refs.toast.show('Username invalid. Username does not contains numbers and any special characters!', 1000)
             return
         }
         else {
@@ -130,7 +134,7 @@ export default class Profile extends Component {
                         usrDialogVisible: false
                     })
                 }).then(() => {
-                    alert('Update username successfully!')
+                    this.refs.toast.show('Update username successfully!', 1000)
                 });
             })
         }
@@ -143,19 +147,19 @@ export default class Profile extends Component {
     confirmChangePassword = () => {
         // check pass + re-pass regex -> update new password here
         if (this.state.newPassword == '') {
-            alert('Please enter new password')
+            this.refs.toast.show('Please enter new password', 1000)
             return
         }
         else if (PASSWORD.test(this.state.newPassword) == false) {
-            alert('Password invalid. Password must uses characters within [a-zA-Z0-9] and at least 6.')
+            this.refs.toast.show('Password invalid. Password must uses characters within [a-zA-Z0-9] and at least 6.', 1000)
             return
         }
         else if (this.state.newRePassword == '') {
-            alert('Please reenter your new password')
+            this.refs.toast.show('Please reenter your new password', 1000)
             return
         }        
         else if (this.state.newPassword != this.state.newRePassword) {
-            alert('Repassword does not matched. Please check your repassword.')
+            this.refs.toast.show('Repassword does not matched. Please check your repassword.', 1000)
             return
         }
         else {
@@ -171,7 +175,7 @@ export default class Profile extends Component {
                         passDialogVisible: false
                     })
                 }).then(() => {
-                    alert('Update password successfully!')
+                    this.refs.toast.show('Update password successfully!', 1000)
                 });
             })
         }        
@@ -199,6 +203,10 @@ export default class Profile extends Component {
     render() {
         return (
             <View style={styles.container}>
+                <Toast ref="toast" 
+                    textStyle={{color:'white', fontSize:16}} 
+                    style={{backgroundColor:'black', borderRadius:50, opacity:0.8}}
+                />
                 <ScrollView>
                     <ProgressDialog
                         visible={this.state.progressVisible}

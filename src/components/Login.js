@@ -5,6 +5,7 @@ import {Actions} from 'react-native-router-flux'
 import firebase from 'firebase'
 import {PASSWORD, EMAIL, USERNAME} from  './Regexs'
 import AddButton from './ui/AddButton';
+import Toast, {DURATION} from 'react-native-easy-toast';
 
 class Login extends Component {
     constructor(props) {
@@ -100,7 +101,9 @@ class Login extends Component {
                     })
                 }
                 else {
-                    Actions.tabs();
+                    this.refs.toast.show('Signin Successfully!', 500, () => {
+                        Actions.tabs();
+                    });
                 }
             })
             .catch(function (error) {
@@ -112,28 +115,16 @@ class Login extends Component {
         } 
         else {
             if (this.state.email == '') {
-                Alert.alert(
-                    'LOGIN FAILED',
-                    'Please enter your username or email'
-                )
+                this.refs.toast.show('Please enter your email!', 1000)
             }
             else if (this.state.password == '') {
-                Alert.alert(
-                    'LOGIN FAILED',
-                    'Please enter your password'
-                )
+                this.refs.toast.show('Please enter your password!', 1000)
             }
             else if (!this.state.emailValid) {
-                Alert.alert(
-                    'LOGIN FAILED',
-                    'Email invalid. Please check your email'
-                )
+                this.refs.toast.show('Email invalid. Please check your email!', 1000)
             }
             else if (!this.state.passwordValid) {
-                Alert.alert(
-                    'LOGIN FAILED',
-                    'Password invalid. Please check your password.'
-                )
+                this.refs.toast.show('Password invalid. Please check your password!', 1000)
             }
         }
     }
@@ -141,6 +132,10 @@ class Login extends Component {
     render() {
         return (
             <ImageBackground source={require('../assets/letter.png')} style={styles.container}>
+                <Toast ref="toast" 
+                    textStyle={{color:'white', fontSize:16}} 
+                    style={{backgroundColor:'black', borderRadius:50, opacity:0.8}}
+                />
                 <Image source={require('../assets/logo.png')} style={{height: 160, resizeMode: 'center', alignSelf: 'center'}} />
                 <View style={styles.inputContainer}>
                     <Icon style={{ color: 'white', marginHorizontal: 8 }} name={'user-circle'} size={25} />
