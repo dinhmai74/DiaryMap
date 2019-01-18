@@ -101,9 +101,7 @@ class Login extends Component {
                     })
                 }
                 else {
-                    this.refs.toast.show('Signin Successfully!', 500, () => {
-                        Actions.tabs();
-                    });
+                    Actions.tabs();
                 }
             })
             .catch(function (error) {

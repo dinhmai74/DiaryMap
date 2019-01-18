@@ -97,7 +97,6 @@ export default class Statistic extends Component {
                 d.push(tmp)
             }
         })
-        alert(JSON.stringify(d))
         return d;
     }
 
