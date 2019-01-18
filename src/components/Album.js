@@ -18,7 +18,7 @@ class Album extends Component {
         firebase.database().ref('event').orderByChild('time').on('value', (dataSnapshot) => {
             dataSnapshot.forEach((childSnapshot) => {
                 var item = childSnapshot.val();
-                if(item.userid == firebase.auth().currentUser.uid && events.imageurl)
+                if(item.userid == firebase.auth().currentUser.uid && item.imageurl != '')
                     events.unshift(item);
             });
             try{this.setState({ refresh: !this.state.refresh });}
