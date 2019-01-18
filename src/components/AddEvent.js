@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, View, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView, Platform } from 'react-native'
+import { Text, View, TextInput, TouchableOpacity, StyleSheet, Image, ScrollView, Platform, Dimensions } from 'react-native'
 import firebase from 'firebase'
 import ImagePicker from 'react-native-image-picker';
 import CustomCard from './ui/CustomCard'
@@ -11,7 +11,7 @@ import RNFetchBlob from 'rn-fetch-blob';
 import moment from 'moment';
 import { Actions } from 'react-native-router-flux';
 import { ProgressDialog } from 'react-native-simple-dialogs';
-import  Rating from 'react-native-easy-rating';
+import Rating from 'react-native-rating-simple'
 
 const Blob = RNFetchBlob.polyfill.Blob;
 const fs = RNFetchBlob.fs;
@@ -52,18 +52,30 @@ class AddEvent extends Component {
     }
 
     iconSelected=()=>{
-        let tmp = require('../assets/default-photo.jpg')
+        let tmp = require('../assets/icons/1.png')
+        switch(this.state.emotion) {
+            case 1: tmp = require('../assets/icons/1.png'); break;
+            case 2: tmp = require('../assets/icons/2.png'); break;
+            case 3: tmp = require('../assets/icons/3.png'); break;
+            case 4: tmp = require('../assets/icons/4.png'); break;
+            case 5: tmp = require('../assets/icons/5.png'); break;
+        }
         return tmp;
     }
 
     iconUnselected=()=>{
-        let tmp = require('../assets/logo.png');
+        let tmp = require('../assets/icons/1g.png')
+        switch(this.state.emotion) {
+            case 1: tmp = require('../assets/icons/1g.png'); break;
+            case 2: tmp = require('../assets/icons/2g.png'); break;
+            case 3: tmp = require('../assets/icons/3g.png'); break;
+            case 4: tmp = require('../assets/icons/4g.png'); break;
+            case 5: tmp = require('../assets/icons/5g.png'); break;
+        }
         return tmp;
     }
 
     render() {
-        const iconSelected = this.iconSelected();
-        const iconUnselected = this.iconUnselected();
         return (
             <View style={{ paddingTop: 58, padding: 5, flex: 1 }}>
                 <ProgressDialog
@@ -89,15 +101,24 @@ class AddEvent extends Component {
                             editable={!this.props.disabled} />
                     </CustomCard>
                     <CustomCard title={'EMOTION'}>
-                        <Rating
-                            style={{margin: 15}}
-                            rating={3}
-                            max={5}
-                            iconWidth={26}
-                            iconHeight={26}
-                            iconSelected={iconSelected}
-                            iconUnselected={iconUnselected}
-                            onRate={(rating) => this.setState({ emotion: rating })} />
+                        <View style={{padding: 10, alignItems: 'center'}}>
+                            <Rating
+                                rating={this.state.emotion}
+                                fullStar={
+                                    <Image source={this.iconSelected()} style={{ width: 30, height: 30, marginLeft: 4 }} />
+                                }
+                                emptyStar={
+                                    <Image source={this.iconUnselected()} style={{ width: 30, height: 30, marginLeft: 4 }} />
+                                }
+                                starSize={40}
+                                onChange={rating => {
+                                    this.setState({ emotion: rating });
+                                }}
+                                onChangeMove={rating => {
+                                    this.setState({ emotion: rating });
+                                }}
+                            />
+                        </View>
                     </CustomCard>
                     <CustomCard title={'TIME'}>
                         <TouchableOpacity
@@ -212,9 +233,6 @@ class AddEvent extends Component {
     };
 
     uploadImage = (uri, mime = 'image/jpeg', name) => {
-        if (this.imagePath == '')
-            return true;
-
         let imgUri = uri; let uploadBlob = null;
         const uploadUri = Platform.OS === 'ios' ? imgUri.replace('file://', '') : imgUri;
         const imageRef = firebase.storage().ref('image/' + name)
@@ -233,6 +251,9 @@ class AddEvent extends Component {
             })
             .then(url => {
                 this.setState({ imageurl: url });
+            })
+            .catch(error => {
+                return error;
             })
     }
 
@@ -254,11 +275,11 @@ class AddEvent extends Component {
                     userid: this.state.userid,
                     emotion: this.state.emotion
                 })
-                    .then(() => {
-                        this.setState({ disabled: false, progressVisible: false })
-                        Actions.tabs();
-                    })
-                    .then(() => { alert('Memory added') });
+                .then(() => {
+                    this.setState({ disabled: false, progressVisible: false })
+                    Actions.tabs();
+                })
+                .then(() => { alert('Memory added') });
             })
         })
 
